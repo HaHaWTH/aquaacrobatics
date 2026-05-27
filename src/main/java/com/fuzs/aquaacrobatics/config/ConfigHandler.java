@@ -194,9 +194,7 @@ public class ConfigHandler {
     @SuppressWarnings("unused")
     @SubscribeEvent
     public static void onConfigChanged(final ConfigChangedEvent.OnConfigChangedEvent evt) {
-
         if (evt.getModID().equals(AquaAcrobatics.MODID)) {
-
             ConfigManager.sync(AquaAcrobatics.MODID, Config.Type.INSTANCE);
         }
         BiomeWaterFogColors.recomputeColors();

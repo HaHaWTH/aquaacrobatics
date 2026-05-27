@@ -89,7 +89,8 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void onKeyPress(InputEvent.KeyInputEvent event) {
-        if (ConfigHandler.MovementConfig.enableToggleCrawling && Keybindings.forceCrawling.isPressed()) {
+                                                                // null check for hot reload
+        if (ConfigHandler.MovementConfig.enableToggleCrawling && Keybindings.forceCrawling != null && Keybindings.forceCrawling.isPressed()) {
             IPlayerResizeable player = (IPlayerResizeable) Minecraft.getMinecraft().player;
             if (player != null) {
                 if (player.canForceCrawling())
