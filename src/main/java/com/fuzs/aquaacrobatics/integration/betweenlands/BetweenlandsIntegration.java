@@ -7,11 +7,14 @@ import thebetweenlands.common.capability.collision.RingOfDispersionEntityCapabil
 public class BetweenlandsIntegration {
     /**
      * Checks if the player is potentially able to phase at some point.
+     * @param player player to check
+     * @return true if the player is potentially able to phase
      */
     public static boolean couldPlayerPhase(EntityPlayer player) {
         ItemStack ring = RingOfDispersionEntityCapability.getRing(player);
-        if(ring == ItemStack.EMPTY)
+        if (ring == ItemStack.EMPTY) {
             return false;
+        }
         return ring.getItemDamage() < ring.getMaxDamage() && !player.isSpectator();
     }
 }

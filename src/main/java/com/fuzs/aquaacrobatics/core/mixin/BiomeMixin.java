@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Biome.class)
 public abstract class BiomeMixin {
-    @Shadow public abstract int getWaterColorMultiplier();
+    @Shadow(remap = false) public abstract int getWaterColorMultiplier();
 
     /* For OptiFine */
     @SuppressWarnings("unused")

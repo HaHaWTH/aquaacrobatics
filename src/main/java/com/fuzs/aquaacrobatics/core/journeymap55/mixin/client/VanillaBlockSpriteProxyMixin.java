@@ -11,6 +11,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.Loader;
+import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,6 +22,7 @@ import java.util.Collections;
 
 @Mixin(VanillaBlockSpriteProxy.class)
 public class VanillaBlockSpriteProxyMixin {
+    @Dynamic("journeymap")
     @Inject(
             method = "getSprites(Ljourneymap/client/model/BlockMD;)Ljava/util/Collection;",
             at = @At("HEAD"),
