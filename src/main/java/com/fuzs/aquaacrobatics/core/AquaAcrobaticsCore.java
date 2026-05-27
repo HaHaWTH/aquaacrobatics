@@ -35,11 +35,11 @@ public class AquaAcrobaticsCore implements IFMLLoadingPlugin {
     public static boolean isModCompatLoaded;
     public static boolean isFgDev;
     private static boolean isScreenRegistered;
-    
+
     /* Config options */
     public static boolean disableBlockUpdateMixins;
     public static boolean enableSkyBoxHeightOverwrite;
-    
+
     public AquaAcrobaticsCore() {
         SELF = this;
         Configuration config = new Configuration(new File("config", "aquaacrobatics_core.cfg"));
@@ -47,23 +47,23 @@ public class AquaAcrobaticsCore implements IFMLLoadingPlugin {
         disableBlockUpdateMixins = config.getBoolean("DisableBlockUpdateMixins", "hacks", false, "TickCentral has a buggy ASM transformer - this will disable these mixins from being applied. Make sure bubble columns are disabled if you use this.");
         enableSkyBoxHeightOverwrite = config.getBoolean("EnableSkyBoxHeightOverwrite", "hacks", false, "Enable overwriting skybox renderer height, vanilla one may cause weird black edges near the chunk border.");
         config.save();
-        
+
         isFgDev = "true".equals(System.getProperty("aquaacrobatics.fghack"));
-        if(isFgDev)
+        if (isFgDev)
             setupMixins();
     }
-    
+
     static void setupMixins() {
         try {
             Class.forName("org.spongepowered.asm.launch.MixinTweaker");
-        } catch(ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             AquaAcrobaticsCore.LOGGER.error("No instance of Mixin framework detected. Unable to proceed load.", e);
             return;
         }
         MixinBootstrap.init();
         Mixins.addConfiguration("META-INF/mixins." + AquaAcrobaticsCore.MODID + ".json");
         isLoaded = true;
-        if(isFgDev) {
+        if (isFgDev) {
             AquaAcrobaticsCore.LOGGER.info("Running in userdev, proceeding to apply workaround to ensure mod is loaded");
             CodeSource codeSource = SELF.getClass().getProtectionDomain().getCodeSource();
             if (codeSource != null) {
@@ -73,7 +73,8 @@ public class AquaAcrobaticsCore implements IFMLLoadingPlugin {
                     if (file.isFile()) {
                         CoreModManager.getReparseableCoremods().remove(file.getName());
                     }
-                } catch (URISyntaxException ignored) {}
+                } catch (URISyntaxException ignored) {
+                }
             } else {
                 AquaAcrobaticsCore.LOGGER.warn("No CodeSource, if this is not a development environment we might run into problems!");
                 AquaAcrobaticsCore.LOGGER.warn(SELF.getClass().getProtectionDomain());
@@ -82,7 +83,7 @@ public class AquaAcrobaticsCore implements IFMLLoadingPlugin {
             AquaAcrobaticsCore.LOGGER.info("Running in obf, thanks for playing with the mod!");
         }
     }
-    
+
     @Override
     public String[] getASMTransformerClass() {
 
@@ -105,7 +106,7 @@ public class AquaAcrobaticsCore implements IFMLLoadingPlugin {
     public void injectData(Map<String, Object> data) {
     }
 
-    
+
     @Override
     public String getAccessTransformerClass() {
 
@@ -117,9 +118,9 @@ public class AquaAcrobaticsCore implements IFMLLoadingPlugin {
         if (!isScreenRegistered) {
 
             isScreenRegistered = true;
-            if(FMLCommonHandler.instance().getSide() == Side.CLIENT)
+            if (FMLCommonHandler.instance().getSide() == Side.CLIENT)
                 MinecraftForge.EVENT_BUS.register(new NoMixinHandler());
-            else if(!isLoaded) {
+            else if (!isLoaded) {
                 throw new RuntimeException("Mixin framework is missing, please install it.");
             }
         }

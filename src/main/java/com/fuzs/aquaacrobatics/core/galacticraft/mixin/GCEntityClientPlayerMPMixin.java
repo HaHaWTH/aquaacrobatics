@@ -22,7 +22,7 @@ public abstract class GCEntityClientPlayerMPMixin extends EntityPlayerSP {
     public GCEntityClientPlayerMPMixin(Minecraft p_i47378_1_, World p_i47378_2_, NetHandlerPlayClient p_i47378_3_, StatisticsManager p_i47378_4_, RecipeBook p_i47378_5_) {
         super(p_i47378_1_, p_i47378_2_, p_i47378_3_, p_i47378_4_, p_i47378_5_);
     }
-    
+
     /**
      * @author embeddedt
      * Reason: use our logic for crouching.
@@ -32,7 +32,7 @@ public abstract class GCEntityClientPlayerMPMixin extends EntityPlayerSP {
         if (this.isPlayerSleeping()) {
             return 0.2f;
         }
-        IPlayerResizeable player = ((IPlayerResizeable)this);
+        IPlayerResizeable player = ((IPlayerResizeable) this);
         return player.getStandingEyeHeight(player.getPose(), player.getSize(player.getPose()));
         /*
         if (this.isPlayerSleeping()) {

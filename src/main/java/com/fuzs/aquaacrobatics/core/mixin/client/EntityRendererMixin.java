@@ -75,7 +75,7 @@ public abstract class EntityRendererMixin {
     )
     private boolean ignoreWater(Entity entity, Material material) {
         /* 1.13 removed this check */
-        if(material == Material.WATER)
+        if (material == Material.WATER)
             return false;
         return entity.isInsideOfMaterial(material);
     }

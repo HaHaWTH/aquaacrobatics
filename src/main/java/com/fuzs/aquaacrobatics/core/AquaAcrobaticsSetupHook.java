@@ -13,7 +13,7 @@ public class AquaAcrobaticsSetupHook implements IFMLCallHook {
 
     @Override
     public Void call() {
-        if(!AquaAcrobaticsCore.isFgDev)
+        if (!AquaAcrobaticsCore.isFgDev)
             AquaAcrobaticsCore.setupMixins();
         return null;
     }

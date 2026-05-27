@@ -77,7 +77,7 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements IPla
     private float swimAnimation;
     private float lastSwimAnimation;
     private float timeUnderwater;
-    
+
     private boolean inBubbleColumn;
 
     public EntityPlayerMixin(World worldIn) {
@@ -87,25 +87,25 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements IPla
 
     private float findEntitySizeScaleFactor() {
         float finalFactor = 1f;
-        if(IntegrationManager.isTrinketsAndBaublesEnabled())
-            finalFactor *= TrinketsAndBaublesIntegration.getResizeFactor((EntityPlayer)(Object)this);
-        if(IntegrationManager.isChiseledMeEnabled())
-            finalFactor *= ChiseledMeIntegration.getResizeFactor((EntityPlayer)(Object)this);
+        if (IntegrationManager.isTrinketsAndBaublesEnabled())
+            finalFactor *= TrinketsAndBaublesIntegration.getResizeFactor((EntityPlayer) (Object) this);
+        if (IntegrationManager.isChiseledMeEnabled())
+            finalFactor *= ChiseledMeIntegration.getResizeFactor((EntityPlayer) (Object) this);
         return finalFactor;
     }
 
     private float findEyeScaleFactor() {
         float finalFactor = 1f;
-        if(IntegrationManager.isArtemisLibEnabled())
-            finalFactor *= ArtemisLibIntegration.getEyeFactor((EntityPlayer)(Object)this);
-        if(IntegrationManager.isChiseledMeEnabled())
-            finalFactor *= ChiseledMeIntegration.getResizeFactor((EntityPlayer)(Object)this);
+        if (IntegrationManager.isArtemisLibEnabled())
+            finalFactor *= ArtemisLibIntegration.getEyeFactor((EntityPlayer) (Object) this);
+        if (IntegrationManager.isChiseledMeEnabled())
+            finalFactor *= ChiseledMeIntegration.getResizeFactor((EntityPlayer) (Object) this);
         return finalFactor;
     }
 
     private EntitySize handleEntitySizeScaling(EntitySize in) {
         float finalFactor = findEntitySizeScaleFactor();
-        if(finalFactor == 1f)
+        if (finalFactor == 1f)
             return in;
         else
             return in.scale(finalFactor);
@@ -170,7 +170,7 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements IPla
                 return 1.0f;
             } else {
                 float f2 = MathHelper.clamp(this.timeUnderwater / 100.0f, 0.0f, 1.0f);
-                float f3 = this.timeUnderwater < 100.0f ? 0.0f : MathHelper.clamp(((float)this.timeUnderwater - 100.0f) / 500.0f, 0.0f, 1.0f);
+                float f3 = this.timeUnderwater < 100.0f ? 0.0f : MathHelper.clamp(((float) this.timeUnderwater - 100.0f) / 500.0f, 0.0f, 1.0f);
                 return f2 * 0.6f + f3 * 0.39999998f;
             }
         }
@@ -188,7 +188,7 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements IPla
 
     @Override
     public void setForcingCrawling(boolean flag) {
-        if(!this.canForceCrawling())
+        if (!this.canForceCrawling())
             return;
         this.dataManager.set(TOGGLED_CRAWLING, flag);
     }
@@ -316,14 +316,14 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements IPla
     }
 
     protected float getEyeHeight(Pose poseIn, EntitySize sizeIn) {
-        if(IntegrationManager.isWitcheryResurrectedEnabled()) {
+        if (IntegrationManager.isWitcheryResurrectedEnabled()) {
             switch (WitcheryResurrectedIntegration.getCurrentTransformation()) {
                 case BAT:
                 case WOLF:
                     return 0.5f;
             }
         }
-        return poseIn == Pose.SLEEPING || poseIn ==  Pose.DYING ? 0.2F : this.getStandingEyeHeight(poseIn, sizeIn);
+        return poseIn == Pose.SLEEPING || poseIn == Pose.DYING ? 0.2F : this.getStandingEyeHeight(poseIn, sizeIn);
     }
 
     @Override
@@ -335,7 +335,7 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements IPla
     @Override
     public float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) {
 
-        switch(poseIn) {
+        switch (poseIn) {
 
             case SWIMMING:
             case FALL_FLYING:
@@ -371,7 +371,7 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements IPla
 
     @Override
     public boolean isPoseClear(Pose poseIn) {
-        if(poseIn == Pose.CROUCHING && IntegrationManager.isBetweenlandsEnabled() && BetweenlandsIntegration.couldPlayerPhase((EntityPlayer)(Object)this))
+        if (poseIn == Pose.CROUCHING && IntegrationManager.isBetweenlandsEnabled() && BetweenlandsIntegration.couldPlayerPhase((EntityPlayer) (Object) this))
             return true;
         return this.world.getCollisionBoxes(this, this.getBoundingBox(poseIn)).isEmpty();
     }
@@ -435,7 +435,7 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements IPla
 
                     pose1 = Pose.CROUCHING;
                 } else {
-                    if(ConfigHandler.MovementConfig.enableCrawling)
+                    if (ConfigHandler.MovementConfig.enableCrawling)
                         pose1 = Pose.SWIMMING;
                     else
                         pose1 = Pose.STANDING;
@@ -458,7 +458,7 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements IPla
     }
 
     protected AxisAlignedBB getBoundingBox(Pose p_213321_1_) {
-        
+
         EntitySize entitysize = this.getSize(p_213321_1_);
         float f = entitysize.width / 2.0F;
         return new AxisAlignedBB(this.posX - (double) f, this.posY, this.posZ - (double) f, this.posX + (double) f, this.posY + (double) entitysize.height, this.posZ + (double) f);

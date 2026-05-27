@@ -7,6 +7,7 @@ import thebetweenlands.common.capability.collision.RingOfDispersionEntityCapabil
 public class BetweenlandsIntegration {
     /**
      * Checks if the player is potentially able to phase at some point.
+     *
      * @param player player to check
      * @return true if the player is potentially able to phase
      */

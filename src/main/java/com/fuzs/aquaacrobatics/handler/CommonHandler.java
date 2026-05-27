@@ -12,9 +12,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class CommonHandler {
     @SubscribeEvent
     public void onEntityConstructing(EntityEvent.EntityConstructing event) {
-        if(event.getEntity() instanceof EntityBoat) {
-            if(ConfigHandler.MiscellaneousConfig.bubbleColumns)
-                ((IRockableBoat)event.getEntity()).aqua$doRegisterData();
+        if (event.getEntity() instanceof EntityBoat) {
+            if (ConfigHandler.MiscellaneousConfig.bubbleColumns)
+                ((IRockableBoat) event.getEntity()).aqua$doRegisterData();
         }
     }
 }

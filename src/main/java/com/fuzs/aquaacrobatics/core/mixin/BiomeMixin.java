@@ -11,12 +11,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Biome.class)
 public abstract class BiomeMixin {
-    @Shadow(remap = false) public abstract int getWaterColorMultiplier();
+    @Shadow(remap = false)
+    public abstract int getWaterColorMultiplier();
 
     /* For OptiFine */
     @SuppressWarnings("unused")
     public int aqua$waterColorMultiplier() {
-        if(ConfigHandler.BlocksConfig.newWaterColors) {
+        if (ConfigHandler.BlocksConfig.newWaterColors) {
             /* We might call getWaterColorForBiome twice, but it's fine because it caches after the first call */
             return BiomeWaterFogColors.getWaterColorForBiome((Biome) (Object) this, getWaterColorMultiplier());
         } else
@@ -25,8 +26,8 @@ public abstract class BiomeMixin {
 
     @Inject(method = "getWaterColorMultiplier", at = @At("TAIL"), remap = false, cancellable = true)
     private void forceNewColor(CallbackInfoReturnable<Integer> cir) {
-        if(ConfigHandler.BlocksConfig.newWaterColors) {
-            cir.setReturnValue(BiomeWaterFogColors.getWaterColorForBiome((Biome)(Object)this, cir.getReturnValue()));
+        if (ConfigHandler.BlocksConfig.newWaterColors) {
+            cir.setReturnValue(BiomeWaterFogColors.getWaterColorForBiome((Biome) (Object) this, cir.getReturnValue()));
         }
     }
 }

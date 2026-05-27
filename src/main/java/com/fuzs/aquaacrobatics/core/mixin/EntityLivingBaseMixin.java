@@ -38,24 +38,24 @@ public abstract class EntityLivingBaseMixin extends Entity {
 
         return this.isSneaking();
     }
-    
+
     private boolean aqua$isLosingAir() {
-        if(ConfigHandler.MiscellaneousConfig.bubbleColumns
-                && this.world.getBlockState(new BlockPos(this.posX, this.posY + (double)this.getEyeHeight(), this.posZ)).getBlock() == CommonProxy.BUBBLE_COLUMN)
+        if (ConfigHandler.MiscellaneousConfig.bubbleColumns
+                && this.world.getBlockState(new BlockPos(this.posX, this.posY + (double) this.getEyeHeight(), this.posZ)).getBlock() == CommonProxy.BUBBLE_COLUMN)
             return false; /* pretend not to be in water */
         return this.isInsideOfMaterial(Material.WATER);
     }
 
     @Redirect(method = "onEntityUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;isInsideOfMaterial(Lnet/minecraft/block/material/Material;)Z"))
     private boolean checkBubbleBreathing(EntityLivingBase entityLivingBase, Material materialIn) {
-        if(materialIn == Material.WATER)
+        if (materialIn == Material.WATER)
             return aqua$isLosingAir();
         return entityLivingBase.isInsideOfMaterial(materialIn);
     }
-    
+
     @ModifyArg(method = "onEntityUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityLivingBase;setAir(I)V"), index = 0)
     private int getNewAirValue(int original) {
-        if(ConfigHandler.MiscellaneousConfig.slowAirReplenish && original == 300 && this.getAir() >= -20 && !aqua$isLosingAir()) {
+        if (ConfigHandler.MiscellaneousConfig.slowAirReplenish && original == 300 && this.getAir() >= -20 && !aqua$isLosingAir()) {
             int oldAirValue = Math.max(this.getAir(), 0);
             return Math.min(oldAirValue + 4, 300);
         }
@@ -64,7 +64,7 @@ public abstract class EntityLivingBaseMixin extends Entity {
 
     @Redirect(method = "travel", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "Lnet/minecraft/entity/EntityLivingBase;collidedHorizontally:Z", ordinal = 1))
     private boolean isJumpingOnLadder(EntityLivingBase instance) {
-        if(ConfigHandler.MovementConfig.newClimbingBehavior)
+        if (ConfigHandler.MovementConfig.newClimbingBehavior)
             return instance.collidedHorizontally || ((EntityLivingBaseMixin) (Object) instance).aqua$isJumping();
         else
             return instance.collidedHorizontally;

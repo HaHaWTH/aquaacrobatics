@@ -11,6 +11,7 @@ public interface FluidAccessor {
     @Accessor(value = "still", remap = false)
     @Mutable
     void setStillTexture(ResourceLocation rl);
+
     @Accessor(value = "flowing", remap = false)
     @Mutable
     void setFlowingTexture(ResourceLocation rl);

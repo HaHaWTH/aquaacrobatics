@@ -10,14 +10,14 @@ import java.util.Set;
 public class AquaAcrobaticsMixinPlugin implements IMixinConfigPlugin {
     @Override
     public void onLoad(String mixinPackage) {
-        
+
     }
 
     @Override
     public String getRefMapperConfig() {
         return null;
     }
-    
+
     private boolean doesClassExist(String name) {
         try {
             Class.forName(name);
@@ -29,8 +29,8 @@ public class AquaAcrobaticsMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if(AquaAcrobaticsCore.disableBlockUpdateMixins) {
-            if(mixinClassName.equals("com.fuzs.aquaacrobatics.core.mixin.BlockSoulSandMixin") || mixinClassName.equals("com.fuzs.aquaacrobatics.core.mixin.BlockMagmaMixin")) {
+        if (AquaAcrobaticsCore.disableBlockUpdateMixins) {
+            if (mixinClassName.equals("com.fuzs.aquaacrobatics.core.mixin.BlockSoulSandMixin") || mixinClassName.equals("com.fuzs.aquaacrobatics.core.mixin.BlockMagmaMixin")) {
                 AquaAcrobaticsCore.LOGGER.error("Disabling soul sand and magma mixins as requested in config.");
                 return false;
             }
@@ -44,7 +44,7 @@ public class AquaAcrobaticsMixinPlugin implements IMixinConfigPlugin {
             return true;
         }
 
-        if(mixinClassName.equals("com.fuzs.aquaacrobatics.core.mixin.client.BlockAliasesBubbleColumnMixin")) {
+        if (mixinClassName.equals("com.fuzs.aquaacrobatics.core.mixin.client.BlockAliasesBubbleColumnMixin")) {
             return doesClassExist("optifine.OptiFineForgeTweaker");
         }
 

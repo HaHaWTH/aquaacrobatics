@@ -14,7 +14,7 @@ public class NoMixinHandler {
     public void onGuiOpen(final GuiOpenEvent evt) {
 
         if (evt.getGui() instanceof GuiMainMenu) {
-            if(!AquaAcrobaticsCore.isLoaded()) {
+            if (!AquaAcrobaticsCore.isLoaded()) {
                 evt.setGui(new GuiNoMixin(evt.getGui()));
             }
             MinecraftForge.EVENT_BUS.unregister(this);

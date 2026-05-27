@@ -21,7 +21,7 @@ public class ConfigHandler {
     @Config.Name("blocks")
     @Config.Comment("Block-related config options (must match server).")
     public static BlocksConfig blocksConfig;
-    
+
     @SuppressWarnings("unused")
     @Config.Name("movement")
     @Config.Comment("Movement related config options.")
@@ -108,18 +108,18 @@ public class ConfigHandler {
         @Config.Name("Eating Animation")
         @Config.Comment("Animate eating in third-person view.")
         public static boolean eatingAnimation = true;
-        
+
         @Config.Name("Bubble Columns")
         @Config.Comment("Enable bubble columns.")
         public static boolean bubbleColumns = false;
 
         @Config.Name("Custom Biome Water Colors")
         @Config.Comment("Allows overriding the water and fog colors for a biome. Specify each entry like this (without quotes) - 'modname:biome,color,fogcolor'")
-        public static String[] customBiomeWaterColors = new String[] {};
+        public static String[] customBiomeWaterColors = new String[]{};
 
         @Config.Name("WorldProvider Fog Blacklist")
         @Config.Comment("List of WorldProviders in which fog should be disabled.")
-        public static String[] providerFogBlacklist = new String[] { "thebetweenlands.common.world.WorldProviderBetweenlands" };
+        public static String[] providerFogBlacklist = new String[]{"thebetweenlands.common.world.WorldProviderBetweenlands"};
 
         @Config.Name("Floating Items")
         @Config.Comment("Whether or not items should float in water like in 1.13+.")
@@ -149,7 +149,7 @@ public class ConfigHandler {
         @Config.Comment(COMPAT_DESCRIPTION)
         @Config.RequiresMcRestart
         public static boolean enderIoIntegration = true;
-        
+
         @Config.Name("Random Patches Integration")
         @Config.Comment(COMPAT_DESCRIPTION)
         public static boolean randomPatchesIntegration = true;

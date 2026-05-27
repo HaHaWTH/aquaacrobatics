@@ -16,15 +16,17 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(BlockFluidRenderer.class)
 public class BlockFluidRendererMixin {
-    @Shadow @Final private BlockColors blockColors;
-    
-    
+    @Shadow
+    @Final
+    private BlockColors blockColors;
+
+
     @ModifyConstant(
             method = "initAtlasSprites",
             constant = @Constant(stringValue = "minecraft:blocks/water_still")
     )
     private String getWaterStillTexture(String old) {
-        if(ConfigHandler.BlocksConfig.newWaterColors)
+        if (ConfigHandler.BlocksConfig.newWaterColors)
             return "aquaacrobatics:blocks/water_still";
         else
             return old;
@@ -35,18 +37,18 @@ public class BlockFluidRendererMixin {
             constant = @Constant(stringValue = "minecraft:blocks/water_flow")
     )
     private String getWaterFlowTexture(String old) {
-        if(ConfigHandler.BlocksConfig.newWaterColors)
+        if (ConfigHandler.BlocksConfig.newWaterColors)
             return "aquaacrobatics:blocks/water_flow";
         else
             return old;
     }
-    
+
 
     @ModifyArgs(
             method = "renderFluid", at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/renderer/BufferBuilder;color(FFFF)Lnet/minecraft/client/renderer/BufferBuilder;"
-            ),
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/BufferBuilder;color(FFFF)Lnet/minecraft/client/renderer/BufferBuilder;"
+    ),
             slice = @Slice(
                     from = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/BlockPos;down()Lnet/minecraft/util/math/BlockPos;", ordinal = 0),
                     to = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/BlockPos;add(III)Lnet/minecraft/util/math/BlockPos;", ordinal = 0)
@@ -55,15 +57,15 @@ public class BlockFluidRendererMixin {
             require = 4
     )
     private void overrideColorForBottomFace(Args args, IBlockAccess blockAccess, IBlockState blockStateIn, BlockPos blockPosIn, BufferBuilder bufferBuilderIn) {
-        if(blockStateIn.getMaterial() == Material.WATER && ((Float)args.get(1)) == 0.5f && ((Float)args.get(2)) == 0.5f) {
+        if (blockStateIn.getMaterial() == Material.WATER && ((Float) args.get(1)) == 0.5f && ((Float) args.get(2)) == 0.5f) {
             int i = blockColors.colorMultiplier(blockStateIn, blockAccess, blockPosIn, 0);
-            float f = (float)(i >> 16 & 255) / 255.0F;
-            float f1 = (float)(i >> 8 & 255) / 255.0F;
-            float f2 = (float)(i & 255) / 255.0F;
+            float f = (float) (i >> 16 & 255) / 255.0F;
+            float f1 = (float) (i >> 8 & 255) / 255.0F;
+            float f2 = (float) (i & 255) / 255.0F;
             args.set(0, f);
             args.set(1, f1);
             args.set(2, f2);
-            args.set(3, 1.0f);   
+            args.set(3, 1.0f);
         }
     }
 }

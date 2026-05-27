@@ -43,9 +43,9 @@ public class ArtemisLibIntegration {
     }
 
     public static float getEyeFactor(EntityPlayer player) {
-        if(((IPlayerResizeable)player).getPose() == Pose.SWIMMING) {
+        if (((IPlayerResizeable) player).getPose() == Pose.SWIMMING) {
             double heightAttribute = player.getAttributeMap().getAttributeInstance(ArtemisLibAttributes.ENTITY_HEIGHT).getAttributeValue();
-            return (float)(heightAttribute * 3);
+            return (float) (heightAttribute * 3);
         }
         return 1f;
     }

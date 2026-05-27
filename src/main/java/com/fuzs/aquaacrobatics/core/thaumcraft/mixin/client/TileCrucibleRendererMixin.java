@@ -14,7 +14,7 @@ import thaumcraft.client.renderers.tile.TileCrucibleRenderer;
 public class TileCrucibleRendererMixin {
     @Redirect(method = "renderFluid", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/BlockModelShapes;getTexture(Lnet/minecraft/block/state/IBlockState;)Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;"))
     private TextureAtlasSprite getLegacyWaterTexture(BlockModelShapes instance, IBlockState state) {
-        if(state == Blocks.WATER.getDefaultState())
+        if (state == Blocks.WATER.getDefaultState())
             return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("minecraft:blocks/water_still");
         return instance.getTexture(state);
     }

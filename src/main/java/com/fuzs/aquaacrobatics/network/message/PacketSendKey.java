@@ -13,12 +13,13 @@ public class PacketSendKey implements IMessage {
         UNKNOWN,
         TOGGLE_CRAWLING
     }
+
     private KeybindPacket keybind = KeybindPacket.UNKNOWN;
 
     @Override
     public void fromBytes(ByteBuf buf) {
         int idx = buf.readInt();
-        if(idx >= KeybindPacket.values().length)
+        if (idx >= KeybindPacket.values().length)
             keybind = KeybindPacket.UNKNOWN;
         else
             keybind = KeybindPacket.values()[idx];
@@ -50,8 +51,8 @@ public class PacketSendKey implements IMessage {
 
         private void handle(PacketSendKey message, MessageContext ctx) {
             EntityPlayerMP playerEntity = ctx.getServerHandler().player;
-            if(message.keybind == KeybindPacket.TOGGLE_CRAWLING) {
-                IPlayerResizeable resizeable = (IPlayerResizeable)playerEntity;
+            if (message.keybind == KeybindPacket.TOGGLE_CRAWLING) {
+                IPlayerResizeable resizeable = (IPlayerResizeable) playerEntity;
                 resizeable.setForcingCrawling(!resizeable.isForcingCrawling());
             }
         }

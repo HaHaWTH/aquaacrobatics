@@ -217,7 +217,7 @@ public abstract class EntityPlayerSPMixin extends AbstractClientPlayer implement
     }
 
     @Dynamic
-    @Redirect(method = { "pushOutOfBlocks", "localPushOutOfBlocks" }, at = @At(value = "INVOKE", target = "Ljava/lang/Math;ceil(D)D"))
+    @Redirect(method = {"pushOutOfBlocks", "localPushOutOfBlocks"}, at = @At(value = "INVOKE", target = "Ljava/lang/Math;ceil(D)D"))
     private double ceil(double a) {
 
         if (ConfigHandler.playerBlockCollisions == ConfigHandler.PlayerBlockCollisions.APPROXIMATE) {
@@ -276,14 +276,14 @@ public abstract class EntityPlayerSPMixin extends AbstractClientPlayer implement
     }
 
     @Dynamic
-    @Inject(method = { "onLivingUpdate", "localOnLivingUpdate" }, at = @At(value = "FIELD", target = "Lnet/minecraft/client/entity/EntityPlayerSP;wasFallFlying:Z"))
+    @Inject(method = {"onLivingUpdate", "localOnLivingUpdate"}, at = @At(value = "FIELD", target = "Lnet/minecraft/client/entity/EntityPlayerSP;wasFallFlying:Z"))
     public void onLivingUpdate(CallbackInfo callbackInfo) {
 
         this.updatePlayerMoveState();
         this.isCrouching = this.isCrouching(!((IPlayerResizeable) this).isPoseClear(Pose.STANDING));
         // handle sprinting behaviour
         this.setSprinting(this.movementStorage.isSprinting);
-        boolean isSaturated = (float)this.getFoodStats().getFoodLevel() > 6.0F || this.capabilities.allowFlying;
+        boolean isSaturated = (float) this.getFoodStats().getFoodLevel() > 6.0F || this.capabilities.allowFlying;
         this.startSprinting(isSaturated);
         this.stopSprinting(isSaturated);
         // handle misc movement
@@ -363,7 +363,7 @@ public abstract class EntityPlayerSPMixin extends AbstractClientPlayer implement
             }
         }
     }
-    
+
     @Override
     public boolean canPerformElytraTakeoff() {
         return (ConfigHandler.MovementConfig.easyElytraTakeoff && this.movementInput.jump && !this.movementStorage.isStartingToFly && !this.movementStorage.jump && this.motionY >= 0.0 && !this.capabilities.isFlying && !this.isRiding() && !this.isOnLadder());
@@ -377,7 +377,7 @@ public abstract class EntityPlayerSPMixin extends AbstractClientPlayer implement
             if (itemstack.getItem() == Items.ELYTRA && ItemElytra.isUsable(itemstack)) {
                 this.connection.sendPacket(new CPacketEntityAction(this, CPacketEntityAction.Action.START_FALL_FLYING));
             } else {
-                IntegrationManager.elytraOpenHooks.forEach(hook -> hook.openElytra((EntityPlayerSP) (Object)this));
+                IntegrationManager.elytraOpenHooks.forEach(hook -> hook.openElytra((EntityPlayerSP) (Object) this));
             }
         }
     }

@@ -12,19 +12,19 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(ModelFluid.class)
 public class ModelFluidMixin {
     private ResourceLocation aqua$getRealStill(Fluid fluid) {
-        if(ConfigHandler.BlocksConfig.newWaterColors && fluid == FluidRegistry.WATER)
+        if (ConfigHandler.BlocksConfig.newWaterColors && fluid == FluidRegistry.WATER)
             return new ResourceLocation("aquaacrobatics:blocks/water_still");
         else
             return fluid.getStill();
     }
 
     private ResourceLocation aqua$getRealFlowing(Fluid fluid) {
-        if(ConfigHandler.BlocksConfig.newWaterColors && fluid == FluidRegistry.WATER)
+        if (ConfigHandler.BlocksConfig.newWaterColors && fluid == FluidRegistry.WATER)
             return new ResourceLocation("aquaacrobatics:blocks/water_flow");
         else
             return fluid.getFlowing();
     }
-    
+
     @Redirect(method = "getTextures", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fluids/Fluid;getStill()Lnet/minecraft/util/ResourceLocation;"), remap = false)
     private ResourceLocation getTextures_RealStill(Fluid fluid) {
         return aqua$getRealStill(fluid);

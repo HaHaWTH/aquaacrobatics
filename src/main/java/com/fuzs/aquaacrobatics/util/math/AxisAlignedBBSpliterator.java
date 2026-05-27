@@ -30,12 +30,12 @@ public class AxisAlignedBBSpliterator extends Spliterators.AbstractSpliterator<A
     private final BiPredicate<IBlockState, BlockPos> statePositionPredicate;
 
     public AxisAlignedBBSpliterator(World reader, @Nullable Entity entity, AxisAlignedBB aabb) {
-        
+
         this(reader, entity, aabb, (state, pos) -> true);
     }
 
     public AxisAlignedBBSpliterator(World reader, @Nullable Entity entity, AxisAlignedBB aabb, BiPredicate<IBlockState, BlockPos> statePositionPredicate) {
-        
+
         super(Long.MAX_VALUE, Spliterator.NONNULL | Spliterator.IMMUTABLE);
         this.reader = reader;
         this.isEntityPresent = entity != null;
@@ -52,7 +52,7 @@ public class AxisAlignedBBSpliterator extends Spliterators.AbstractSpliterator<A
     }
 
     public boolean tryAdvance(Consumer<? super AxisAlignedBB> consumer) {
-        
+
         return this.isEntityPresent && this.isEntityOutsideOfBorder(consumer) || this.isAABBColliding(consumer);
     }
 
@@ -129,7 +129,7 @@ public class AxisAlignedBBSpliterator extends Spliterators.AbstractSpliterator<A
     }
 
     private boolean isEntityOutsideOfBorder(Consumer<? super AxisAlignedBB> consumer) {
-        
+
         Objects.requireNonNull(this.entity);
         this.isEntityPresent = false;
         WorldBorder worldborder = this.reader.getWorldBorder();
@@ -145,7 +145,7 @@ public class AxisAlignedBBSpliterator extends Spliterators.AbstractSpliterator<A
     }
 
     public static boolean isBoundingBoxWithinBorder(WorldBorder worldBorder, AxisAlignedBB entityBoundingBox) {
-        
+
         double minX = MathHelper.floor(worldBorder.minX());
         double minZ = MathHelper.floor(worldBorder.minZ());
         double maxX = MathHelper.ceil(worldBorder.maxX());

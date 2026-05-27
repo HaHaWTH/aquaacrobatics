@@ -37,7 +37,7 @@ public class CommonProxy {
 
     public void onPreInit(FMLPreInitializationEvent event) {
         IntegrationManager.loadCompat();
-        if(needNetworking())
+        if (needNetworking())
             NetworkHandler.registerMessages(AquaAcrobatics.MODID);
         MinecraftForge.EVENT_BUS.register(new CommonHandler());
     }
@@ -52,7 +52,7 @@ public class CommonProxy {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        if(ConfigHandler.MiscellaneousConfig.bubbleColumns)
+        if (ConfigHandler.MiscellaneousConfig.bubbleColumns)
             event.getRegistry().register(new BlockBubbleColumn());
     }
 
@@ -67,7 +67,7 @@ public class CommonProxy {
         if (IntegrationManager.isWitcheryResurrectedEnabled())
             WitcheryResurrectedIntegration.register();
 
-        if(!AquaAcrobaticsCore.isModCompatLoaded)
+        if (!AquaAcrobaticsCore.isModCompatLoaded)
             AquaAcrobatics.LOGGER.error("Please consider installing MixinBooter to ensure compatibility with more mods");
 
         BiomeWaterFogColors.recomputeColors();

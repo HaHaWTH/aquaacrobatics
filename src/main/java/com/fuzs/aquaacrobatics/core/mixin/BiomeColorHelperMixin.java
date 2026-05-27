@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Pseudo
-@Mixin(targets = { "net/minecraft/world/biome/BiomeColorHelper$3" })
+@Mixin(targets = {"net/minecraft/world/biome/BiomeColorHelper$3"})
 public class BiomeColorHelperMixin {
     /**
      * Typically we would just use the GetWaterColor event... but mods like Thaumcraft don't call it
@@ -21,7 +21,7 @@ public class BiomeColorHelperMixin {
     @Inject(method = "func_180283_a", at = @At("RETURN"), cancellable = true, remap = false)
     @Dynamic("Exists only in an SRG environment")
     private void getNewWaterColorMultiplier(Biome biome, BlockPos position, CallbackInfoReturnable<Integer> cir) {
-        if(ConfigHandler.BlocksConfig.newWaterColors)
+        if (ConfigHandler.BlocksConfig.newWaterColors)
             cir.setReturnValue(BiomeWaterFogColors.getWaterColorForBiome(biome, cir.getReturnValue()));
     }
 }

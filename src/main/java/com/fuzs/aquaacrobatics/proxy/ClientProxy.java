@@ -50,7 +50,7 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(new AirMeterHandler());
         MinecraftForge.EVENT_BUS.register(new FogHandler());
 
-        if(ConfigHandler.BlocksConfig.newWaterColors) {
+        if (ConfigHandler.BlocksConfig.newWaterColors) {
             List<IResourcePack> packs = ObfuscationReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "field_110449_ao");
             packs.add(new WaterResourcePack(event.getSourceFile()));
             FMLClientHandler.instance().refreshResources(VanillaResourceType.TEXTURES);
@@ -73,13 +73,13 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event) {
-        if(ConfigHandler.MiscellaneousConfig.bubbleColumns)
+        if (ConfigHandler.MiscellaneousConfig.bubbleColumns)
             ModelLoader.setCustomStateMapper(CommonProxy.BUBBLE_COLUMN, new StateMap.Builder().ignore(BlockLiquid.LEVEL, BlockBubbleColumn.DRAG).build());
     }
-    
+
     @SubscribeEvent
     public static void registerTextures(TextureStitchEvent.Pre event) {
-        if(ConfigHandler.BlocksConfig.newWaterColors) {
+        if (ConfigHandler.BlocksConfig.newWaterColors) {
             TextureMap map = event.getMap();
             /* Register the custom 1.13-style texture used by most in-world renderers */
             map.registerSprite(new ResourceLocation("aquaacrobatics:blocks/water_still"));
@@ -89,13 +89,13 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void onKeyPress(InputEvent.KeyInputEvent event) {
-        if(ConfigHandler.MovementConfig.enableToggleCrawling && Keybindings.forceCrawling.isPressed()) {
+        if (ConfigHandler.MovementConfig.enableToggleCrawling && Keybindings.forceCrawling.isPressed()) {
             IPlayerResizeable player = (IPlayerResizeable) Minecraft.getMinecraft().player;
-            if(player != null) {
-                if(player.canForceCrawling())
+            if (player != null) {
+                if (player.canForceCrawling())
                     NetworkHandler.INSTANCE.sendToServer(new PacketSendKey(PacketSendKey.KeybindPacket.TOGGLE_CRAWLING));
                 else {
-                    ((EntityPlayerSP)player).sendMessage(new TextComponentTranslation("chat.aquaacrobatics.cannot_toggle_crawling"));
+                    ((EntityPlayerSP) player).sendMessage(new TextComponentTranslation("chat.aquaacrobatics.cannot_toggle_crawling"));
                 }
             }
         }
@@ -116,11 +116,11 @@ public class ClientProxy extends CommonProxy {
             ArtemisLibIntegration.register();
         }
 
-        if(IntegrationManager.isEnderIoEnabled()) {
+        if (IntegrationManager.isEnderIoEnabled()) {
             EnderIOIntegration.register();
         }
 
-        if(IntegrationManager.isThaumicAugmentationEnabled()) {
+        if (IntegrationManager.isThaumicAugmentationEnabled()) {
             ThaumicAugmentationIntegration.register();
         }
     }

@@ -35,7 +35,7 @@ import java.util.HashSet;
 
 /**
  * Uses Forge events to adjust water rendering so it more closely approximates 1.13+.
- *
+ * <p>
  * Some of the code in this class is based off of Minecraft 1.16.
  */
 public class FogHandler {
@@ -43,33 +43,31 @@ public class FogHandler {
     private int targetFogColor = -1;
     private int prevFogColor = -1;
     private long fogAdjustTime = -1L;
-    
+
     private static HashSet<String> worldProviderClassNames = null;
-    
+
     public static void recomputeBlacklist() {
         worldProviderClassNames = new HashSet<>();
         worldProviderClassNames.addAll(Arrays.asList(ConfigHandler.MiscellaneousConfig.providerFogBlacklist));
     }
-    
+
     private boolean shouldSkipFogOverride(World world) {
-        if(!ConfigHandler.BlocksConfig.newWaterFog)
+        if (!ConfigHandler.BlocksConfig.newWaterFog)
             return true;
         return worldProviderClassNames.contains(world.provider.getClass().getName());
     }
 
     @SubscribeEvent
-    public void registerBlockColors(ColorHandlerEvent.Block event){
-        if(ConfigHandler.MiscellaneousConfig.bubbleColumns)
-            event.getBlockColors().registerBlockColorHandler(new IBlockColor()
-            {
-                public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex)
-                {
+    public void registerBlockColors(ColorHandlerEvent.Block event) {
+        if (ConfigHandler.MiscellaneousConfig.bubbleColumns)
+            event.getBlockColors().registerBlockColorHandler(new IBlockColor() {
+                public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
                     return worldIn != null && pos != null ? BiomeColorHelper.getWaterColorAtPos(worldIn, pos) : -1;
                 }
-    
+
             }, CommonProxy.BUBBLE_COLUMN);
     }
-    
+
     @SubscribeEvent
     public void onRenderFogDensity(EntityViewRenderEvent.FogDensity event) {
         switch (ConfigHandler.BlocksConfig.waterFogMode) {
@@ -84,14 +82,14 @@ public class FogHandler {
 
     private void handleExp2Fog(EntityViewRenderEvent.FogDensity event) {
         Entity eventEntity = event.getEntity();
-        if(eventEntity instanceof EntityLivingBase && ((EntityLivingBase)eventEntity).isPotionActive(MobEffects.BLINDNESS))
+        if (eventEntity instanceof EntityLivingBase && ((EntityLivingBase) eventEntity).isPotionActive(MobEffects.BLINDNESS))
             return;
-        if(event.getState().getMaterial() == Material.WATER && !shouldSkipFogOverride(eventEntity.getEntityWorld())) {
+        if (event.getState().getMaterial() == Material.WATER && !shouldSkipFogOverride(eventEntity.getEntityWorld())) {
             GlStateManager.setFog(GlStateManager.FogMode.EXP2);
             float density = 0.05f;
-            if(eventEntity instanceof EntityPlayer) {
-                EntityPlayer playerEntity = (EntityPlayer)eventEntity;
-                float waterVision = ((IPlayerResizeable)playerEntity).getWaterVision();
+            if (eventEntity instanceof EntityPlayer) {
+                EntityPlayer playerEntity = (EntityPlayer) eventEntity;
+                float waterVision = ((IPlayerResizeable) playerEntity).getWaterVision();
                 density -= waterVision * waterVision * 0.03F;
                 Biome biome = playerEntity.world.getBiome(playerEntity.getPosition());
                 if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SWAMP)) {
@@ -106,6 +104,7 @@ public class FogHandler {
     // Based on Minecraft 1.21.7
     static final float FOG_END = 96.0F;
     static final float FOG_START = -8.0F;
+
     private void handleLinearFog(EntityViewRenderEvent.FogDensity event) {
         Entity eventEntity = event.getEntity();
         if (eventEntity instanceof EntityLivingBase && ((EntityLivingBase) eventEntity).isPotionActive(MobEffects.BLINDNESS)) {
@@ -135,14 +134,13 @@ public class FogHandler {
     }
 
 
-
     /* LOW to override mods like Biomes O' Plenty which force their own underwater fog color */
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onRenderFogColor(EntityViewRenderEvent.FogColors event) {
-        if(!ConfigHandler.BlocksConfig.newWaterColors)
+        if (!ConfigHandler.BlocksConfig.newWaterColors)
             return;
         Block blockInside = event.getState().getBlock();
-        if((event.getState().getMaterial() == Material.WATER) && event.getEntity() instanceof EntityPlayer && !shouldSkipFogOverride(event.getEntity().getEntityWorld())) {
+        if ((event.getState().getMaterial() == Material.WATER) && event.getEntity() instanceof EntityPlayer && !shouldSkipFogOverride(event.getEntity().getEntityWorld())) {
             float fogRed, fogGreen, fogBlue;
             EntityPlayer playerEntity = (EntityPlayer) event.getEntity();
             long i = System.nanoTime() / 1000000L;
@@ -158,10 +156,10 @@ public class FogHandler {
             int j1 = prevFogColor >> 16 & 255;
             int k1 = prevFogColor >> 8 & 255;
             int l1 = prevFogColor & 255;
-            float f = MathHelper.clamp((float)(i - fogAdjustTime) / 5000.0F, 0.0F, 1.0F);
-            float f1 = MathHelperNew.lerp(f, (float)j1, (float)k);
-            float f2 = MathHelperNew.lerp(f, (float)k1, (float)l);
-            float f3 = MathHelperNew.lerp(f, (float)l1, (float)i1);
+            float f = MathHelper.clamp((float) (i - fogAdjustTime) / 5000.0F, 0.0F, 1.0F);
+            float f1 = MathHelperNew.lerp(f, (float) j1, (float) k);
+            float f2 = MathHelperNew.lerp(f, (float) k1, (float) l);
+            float f3 = MathHelperNew.lerp(f, (float) l1, (float) i1);
             fogRed = f1 / 255.0F;
             fogGreen = f2 / 255.0F;
             fogBlue = f3 / 255.0F;
@@ -170,7 +168,7 @@ public class FogHandler {
                 prevFogColor = MathHelper.floor(f1) << 16 | MathHelper.floor(f2) << 8 | MathHelper.floor(f3);
                 fogAdjustTime = i;
             }
-            float f6 = ((IPlayerResizeable)playerEntity).getWaterVision();
+            float f6 = ((IPlayerResizeable) playerEntity).getWaterVision();
             float f9 = Math.min(1.0F / fogRed, Math.min(1.0F / fogGreen, 1.0F / fogBlue));
             fogRed = fogRed * (1.0F - f6) + fogRed * f9 * f6;
             fogGreen = fogGreen * (1.0F - f6) + fogGreen * f9 * f6;
@@ -180,7 +178,7 @@ public class FogHandler {
             if (playerEntity.isPotionActive(MobEffects.BLINDNESS)) {
                 int potionDuration = playerEntity.getActivePotionEffect(MobEffects.BLINDNESS).getDuration();
                 if (potionDuration < 20) {
-                    blindnessFactor *= (1.0F - (float)potionDuration / 20.0F);
+                    blindnessFactor *= (1.0F - (float) potionDuration / 20.0F);
                 } else {
                     blindnessFactor = 0.0D;
                 }
@@ -192,15 +190,15 @@ public class FogHandler {
                 }
 
                 blindnessFactor = blindnessFactor * blindnessFactor;
-                fogRed = (float)((double)fogRed * blindnessFactor);
-                fogGreen = (float)((double)fogGreen * blindnessFactor);
-                fogBlue = (float)((double)fogBlue * blindnessFactor);
+                fogRed = (float) ((double) fogRed * blindnessFactor);
+                fogGreen = (float) ((double) fogGreen * blindnessFactor);
+                fogBlue = (float) ((double) fogBlue * blindnessFactor);
             }
 
             event.setRed(fogRed);
             event.setGreen(fogGreen);
             event.setBlue(fogBlue);
-        } else if((blockInside == Blocks.LAVA || blockInside == Blocks.FLOWING_LAVA)) {
+        } else if ((blockInside == Blocks.LAVA || blockInside == Blocks.FLOWING_LAVA)) {
             event.setRed(0.6f);
             event.setGreen(0.1f);
             event.setBlue(0.0f);

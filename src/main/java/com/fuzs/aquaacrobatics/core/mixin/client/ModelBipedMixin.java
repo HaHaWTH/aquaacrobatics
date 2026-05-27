@@ -90,7 +90,7 @@ public abstract class ModelBipedMixin extends ModelBase implements IModelBipedSw
                 float f = 1.0F - (float) Math.pow(useRatio, 27.0D);
                 if (useRatio < 0.8F) {
 
-                    f += MathHelper.abs(MathHelper.cos(animationCount / 4.0F * (float)Math.PI) * 0.1F);
+                    f += MathHelper.abs(MathHelper.cos(animationCount / 4.0F * (float) Math.PI) * 0.1F);
                 }
 
                 ModelRenderer bipedArm = isRight ? this.bipedRightArm : this.bipedLeftArm;

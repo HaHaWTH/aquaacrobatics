@@ -33,7 +33,7 @@ public abstract class BlockSoulSandMixin extends Block {
     public int tickRate(World worldIn) {
         return 20;
     }
-    
+
     @Override
     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
         BlockBubbleColumn.placeBubbleColumn(worldIn, pos.up(), true);

@@ -101,8 +101,7 @@ public class IntegrationManager {
         return isTrinketsAndBaublesLoaded && ConfigHandler.IntegrationConfig.trinketsAndBaublesIntegration;
     }
 
-    public static boolean isWitcheryResurrectedEnabled()
-    {
+    public static boolean isWitcheryResurrectedEnabled() {
         return isWitcheryResurrectedLoaded && ConfigHandler.IntegrationConfig.witcheryResurrectedIntegration;
     }
 }

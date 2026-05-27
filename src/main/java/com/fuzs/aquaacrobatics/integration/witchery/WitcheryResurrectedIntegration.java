@@ -7,8 +7,7 @@ import net.msrandom.witchery.init.data.WitcheryAlternateForms;
 import net.msrandom.witchery.transformation.CreatureForm;
 import net.msrandom.witchery.util.WitcheryUtils;
 
-public class WitcheryResurrectedIntegration
-{
+public class WitcheryResurrectedIntegration {
     public static boolean HAS_TRANSFORMED = false;
 
     private static Transformation currentTransformation = Transformation.PLAYER;
@@ -30,8 +29,7 @@ public class WitcheryResurrectedIntegration
         });
     }
 
-    public static Transformation getCurrentTransformation()
-    {
+    public static Transformation getCurrentTransformation() {
         return currentTransformation;
     }
 

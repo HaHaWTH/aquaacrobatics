@@ -42,7 +42,7 @@ public class AttachAttributesFix extends AttachAttributes {
     @Override
     @SubscribeEvent
     public void onEntityRenderPre(final RenderLivingEvent.Pre evt) {
-        
+
         EntityLivingBase entity = evt.getEntity();
         this.updateResizingFlag(entity);
         if (this.isResizingRequired) {

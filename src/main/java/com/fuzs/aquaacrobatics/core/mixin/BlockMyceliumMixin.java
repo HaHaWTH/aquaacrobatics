@@ -24,7 +24,7 @@ public abstract class BlockMyceliumMixin {
 
     @Redirect(method = "updateTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;)Z", ordinal = 1), require = 0)
     public boolean avoidSettingGrass(World world, BlockPos pos, IBlockState state) {
-        if(world.getBlockState(pos.up()).getMaterial().isLiquid())
+        if (world.getBlockState(pos.up()).getMaterial().isLiquid())
             return false;
         return world.setBlockState(pos, state);
     }

@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class RenderBoatMixin {
     @Inject(method = "setupRotation", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;scale(FFF)V", shift = At.Shift.BEFORE))
     private void addRockingRotation(EntityBoat boat, float entityYaw, float partialTicks, CallbackInfo ci) {
-        float f2 = ((IRockableBoat)boat).getRockingAngle(partialTicks);
+        float f2 = ((IRockableBoat) boat).getRockingAngle(partialTicks);
         if (!MathHelper.epsilonEquals(f2, 0.0F)) {
             GlStateManager.rotate(f2, 1.0F, 0.0F, 1.0F);
         }

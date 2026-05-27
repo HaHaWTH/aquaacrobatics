@@ -27,14 +27,15 @@ public abstract class EntityThrowableMixin extends Entity {
 
     @Redirect(method = "onUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;rayTraceBlocks(Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Vec3d;)Lnet/minecraft/util/math/RayTraceResult;"))
     private RayTraceResult rayTraceThroughLiquid(World world, Vec3d start, Vec3d end) {
-        if(aqua$isNewProjectile)
+        if (aqua$isNewProjectile)
             return world.rayTraceBlocks(start, end, false, true, false);
         else
             return world.rayTraceBlocks(start, end);
     }
+
     @Inject(method = "onUpdate", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/projectile/EntityThrowable;posX:D", opcode = Opcodes.PUTFIELD, ordinal = 0))
     private void doCheckBlockCollision(CallbackInfo ci) {
-        if(aqua$isNewProjectile)
+        if (aqua$isNewProjectile)
             this.doBlockCollisions();
     }
 }
