@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class BlockAliasesBubbleColumnMixin {
     /**
      * @author embeddedt
-     * Reason: inject the bubble column into the block aliases.
+     * @reason inject the bubble column into the block aliases
      */
     @Inject(method = "loadBlockAliases", at = @At("RETURN"), remap = false)
     private static void injectAABubbleColumn(InputStream in, String path, List<List<?>> listBlockAliases, CallbackInfo ci) {

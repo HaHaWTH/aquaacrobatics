@@ -25,7 +25,7 @@ public abstract class GCEntityClientPlayerMPMixin extends EntityPlayerSP {
 
     /**
      * @author embeddedt
-     * Reason: use our logic for crouching.
+     * @reason use our logic for crouching
      */
     @Overwrite
     public float getEyeHeight() {
