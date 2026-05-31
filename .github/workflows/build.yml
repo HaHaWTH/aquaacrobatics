@@ -24,6 +24,6 @@ jobs:
       with:
         name: aqua-acrobatics
         path: |
-          build/libs/AquaAcrobatics-*.jar
-          !build/libs/AquaAcrobatics-*-*.jar
+          build/libs/HydroAgility-*.jar
+          !build/libs/HydroAgility-*-*.jar
         archive: false

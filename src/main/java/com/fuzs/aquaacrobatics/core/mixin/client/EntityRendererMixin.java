@@ -59,7 +59,6 @@ public abstract class EntityRendererMixin {
 
     @Inject(method = "updateRenderer", at = @At("TAIL"))
     public void updateRenderer(CallbackInfo callbackInfo) {
-
         this.interpolateHeight();
     }
 
@@ -69,7 +68,7 @@ public abstract class EntityRendererMixin {
         this.eyeHeight += (this.entityEyeHeight - this.eyeHeight) * 0.5F;
     }
 
-    // Backport start: Camera logic from modern versions
+    // Backport start - Camera logic from modern versions
     @Redirect(
             method = {"updateFogColor", "setupFog", "getFOVModifier"},
             at = @At(
