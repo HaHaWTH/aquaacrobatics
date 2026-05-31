@@ -15,7 +15,6 @@
     "EntityThrowableMixin",
     "NetHandlerPlayServerMixin",
     "BiomeMixin",
-    "BiomeColorHelperMixin",
     "BlockGrassMixin",
     "BlockLiquidMixin",
     "BlockMagmaMixin",
@@ -35,7 +34,8 @@
     "client.RenderBoatMixin",
     "client.RenderGlobalMixin",
     "client.RenderPlayerMixin",
-    "client.PlayerControllerMPMixin"
+    "client.PlayerControllerMPMixin",
+    "client.BiomeColorHelperMixin"
   ],
   "injectors": {
     "defaultRequire": 1

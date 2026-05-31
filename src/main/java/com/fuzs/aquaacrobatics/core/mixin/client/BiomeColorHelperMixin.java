@@ -1,4 +1,4 @@
-package com.fuzs.aquaacrobatics.core.mixin;
+package com.fuzs.aquaacrobatics.core.mixin.client;
 
 import com.fuzs.aquaacrobatics.biome.BiomeWaterFogColors;
 import com.fuzs.aquaacrobatics.config.ConfigHandler;
@@ -21,7 +21,8 @@ public class BiomeColorHelperMixin {
     @Inject(method = "func_180283_a", at = @At("RETURN"), cancellable = true, remap = false)
     @Dynamic("Exists only in an SRG environment")
     private void getNewWaterColorMultiplier(Biome biome, BlockPos position, CallbackInfoReturnable<Integer> cir) {
-        if (ConfigHandler.BlocksConfig.newWaterColors)
+        if (ConfigHandler.BlocksConfig.newWaterColors) {
             cir.setReturnValue(BiomeWaterFogColors.getWaterColorForBiome(biome, cir.getReturnValue()));
+        }
     }
 }
