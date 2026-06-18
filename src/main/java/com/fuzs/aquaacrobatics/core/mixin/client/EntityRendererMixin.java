@@ -13,6 +13,8 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -30,6 +32,9 @@ public abstract class EntityRendererMixin {
     @Shadow
     @Final
     private Minecraft mc;
+
+    @Shadow
+    private float thirdPersonDistancePrev;
 
     private float eyeHeight;
     private float previousEyeHeight;
@@ -115,7 +120,46 @@ public abstract class EntityRendererMixin {
         double x = entity.prevPosX + (entity.posX - entity.prevPosX) * (double) partialTicks;
         double y = entity.prevPosY + (entity.posY - entity.prevPosY) * (double) partialTicks;
         double z = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * (double) partialTicks;
-        return new Vec3d(x, y + (double) this.aquaAcrobatics$getCameraEyeHeight(entity, partialTicks), z);
+        Vec3d eyePos = new Vec3d(x, y + (double) this.aquaAcrobatics$getCameraEyeHeight(entity, partialTicks), z);
+        if (this.mc.gameSettings.thirdPersonView <= 0 || this.mc.gameSettings.debugCamEnable) {
+            return eyePos;
+        }
+
+        return this.aquaAcrobatics$getThirdPersonCameraPosition(entity, partialTicks, eyePos);
+    }
+
+    @Unique
+    private Vec3d aquaAcrobatics$getThirdPersonCameraPosition(Entity entity, float partialTicks, Vec3d eyePos) {
+        double cameraDistance = this.thirdPersonDistancePrev + (4.0F - this.thirdPersonDistancePrev) * partialTicks;
+        float yaw = entity.rotationYaw;
+        float pitch = entity.rotationPitch;
+        if (this.mc.gameSettings.thirdPersonView == 2) {
+            pitch += 180.0F;
+        }
+
+        double xOffset = (double) (-MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F)) * cameraDistance;
+        double zOffset = (double) (MathHelper.cos(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F)) * cameraDistance;
+        double yOffset = (double) (-MathHelper.sin(pitch * 0.017453292F)) * cameraDistance;
+
+        for (int i = 0; i < 8; ++i) {
+            float xJitter = (float) ((i & 1) * 2 - 1) * 0.1F;
+            float yJitter = (float) ((i >> 1 & 1) * 2 - 1) * 0.1F;
+            float zJitter = (float) ((i >> 2 & 1) * 2 - 1) * 0.1F;
+            Vec3d from = eyePos.add(xJitter, yJitter, zJitter);
+            Vec3d to = new Vec3d(eyePos.x - xOffset + (double) xJitter + (double) zJitter, eyePos.y - yOffset + (double) yJitter, eyePos.z - zOffset + (double) zJitter);
+            RayTraceResult result = this.mc.world.rayTraceBlocks(from, to);
+            if (result != null) {
+                double hitDistance = result.hitVec.distanceTo(eyePos);
+                if (hitDistance < cameraDistance) {
+                    cameraDistance = hitDistance;
+                }
+            }
+        }
+
+        xOffset = (double) (-MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F)) * cameraDistance;
+        zOffset = (double) (MathHelper.cos(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F)) * cameraDistance;
+        yOffset = (double) (-MathHelper.sin(pitch * 0.017453292F)) * cameraDistance;
+        return new Vec3d(eyePos.x - xOffset, eyePos.y - yOffset, eyePos.z - zOffset);
     }
 
     @Unique
