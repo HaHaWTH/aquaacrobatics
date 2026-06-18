@@ -82,8 +82,13 @@ public abstract class EntityRendererMixin {
             )
     )
     private IBlockState getBlockStateAtCameraForFog(World world, Entity entity, float partialTicks) {
+        IBlockState cameraWaterState = this.aquaAcrobatics$getCameraWaterState(world, entity, partialTicks);
+        if (cameraWaterState != null) {
+            return cameraWaterState;
+        }
+
         IBlockState state = ActiveRenderInfo.getBlockStateAtEntityViewpoint(world, entity, partialTicks);
-        if (state.getMaterial() == Material.WATER && !this.aquaAcrobatics$isCameraInWater(world, entity, partialTicks)) {
+        if (state.getMaterial() == Material.WATER) {
             return Blocks.AIR.getDefaultState();
         }
         return state;
@@ -97,17 +102,28 @@ public abstract class EntityRendererMixin {
             )
     )
     private Vec3d getFogColor(Block block, World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks) {
-        if (state.getMaterial() == Material.WATER && !this.aquaAcrobatics$isCameraInWater(world, entity, partialTicks)) {
+        Vec3d cameraPos = this.aquaAcrobatics$getCameraPosition(entity, partialTicks);
+        BlockPos cameraBlockPos = new BlockPos(cameraPos);
+        IBlockState cameraState = world.getBlockState(cameraBlockPos);
+        if (this.aquaAcrobatics$isWaterAtCamera(world, cameraBlockPos, cameraState, cameraPos)) {
+            return cameraState.getBlock().getFogColor(world, cameraBlockPos, cameraState, entity, originalColor, partialTicks);
+        }
+        if (state.getMaterial() == Material.WATER) {
             return originalColor;
         }
         return block.getFogColor(world, pos, state, entity, originalColor, partialTicks);
     }
 
     @Unique
-    private boolean aquaAcrobatics$isCameraInWater(World world, Entity entity, float partialTicks) {
+    private IBlockState aquaAcrobatics$getCameraWaterState(World world, Entity entity, float partialTicks) {
         Vec3d cameraPos = this.aquaAcrobatics$getCameraPosition(entity, partialTicks);
         BlockPos blockPos = new BlockPos(cameraPos);
         IBlockState state = world.getBlockState(blockPos);
+        return this.aquaAcrobatics$isWaterAtCamera(world, blockPos, state, cameraPos) ? state : null;
+    }
+
+    @Unique
+    private boolean aquaAcrobatics$isWaterAtCamera(World world, BlockPos blockPos, IBlockState state, Vec3d cameraPos) {
         if (state.getMaterial() != Material.WATER) {
             return false;
         }
