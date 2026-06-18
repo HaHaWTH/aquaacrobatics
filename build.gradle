@@ -169,7 +169,7 @@ processResources {
 
 jar {
     manifest {
-        attributes "FMLCorePlugin": project.group + ".core." + project.ext.name.replaceAll("\\s", "") + "Core"
+        attributes "FMLCorePlugin": project.group + ".core.AquaAcrobaticsCore"
         attributes "FMLCorePluginContainsFMLMod": "true"
         attributes "ForceLoadAsMod": "true"
     }
