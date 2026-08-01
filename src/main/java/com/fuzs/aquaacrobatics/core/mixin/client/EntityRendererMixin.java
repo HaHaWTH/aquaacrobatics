@@ -73,132 +73,132 @@ public abstract class EntityRendererMixin {
         this.eyeHeight += (this.entityEyeHeight - this.eyeHeight) * 0.5F;
     }
 
-    // Backport start - Camera logic from modern versions
-    @Redirect(
-            method = {"updateFogColor", "setupFog", "getFOVModifier"},
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/renderer/ActiveRenderInfo;getBlockStateAtEntityViewpoint(Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;F)Lnet/minecraft/block/state/IBlockState;"
-            )
-    )
-    private IBlockState getBlockStateAtCameraForFog(World world, Entity entity, float partialTicks) {
-        IBlockState cameraWaterState = this.aquaAcrobatics$getCameraWaterState(world, entity, partialTicks);
-        if (cameraWaterState != null) {
-            return cameraWaterState;
-        }
-
-        IBlockState state = ActiveRenderInfo.getBlockStateAtEntityViewpoint(world, entity, partialTicks);
-        if (state.getMaterial() == Material.WATER) {
-            return Blocks.AIR.getDefaultState();
-        }
-        return state;
-    }
-
-    @Redirect(
-            method = "updateFogColor",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/block/Block;getFogColor(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/Vec3d;F)Lnet/minecraft/util/math/Vec3d;"
-            )
-    )
-    private Vec3d getFogColor(Block block, World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks) {
-        Vec3d cameraPos = this.aquaAcrobatics$getCameraPosition(entity, partialTicks);
-        BlockPos cameraBlockPos = new BlockPos(cameraPos);
-        IBlockState cameraState = world.getBlockState(cameraBlockPos);
-        if (this.aquaAcrobatics$isWaterAtCamera(world, cameraBlockPos, cameraState, cameraPos)) {
-            return cameraState.getBlock().getFogColor(world, cameraBlockPos, cameraState, entity, originalColor, partialTicks);
-        }
-        if (state.getMaterial() == Material.WATER) {
-            return originalColor;
-        }
-        return block.getFogColor(world, pos, state, entity, originalColor, partialTicks);
-    }
-
-    @Unique
-    private IBlockState aquaAcrobatics$getCameraWaterState(World world, Entity entity, float partialTicks) {
-        Vec3d cameraPos = this.aquaAcrobatics$getCameraPosition(entity, partialTicks);
-        BlockPos blockPos = new BlockPos(cameraPos);
-        IBlockState state = world.getBlockState(blockPos);
-        return this.aquaAcrobatics$isWaterAtCamera(world, blockPos, state, cameraPos) ? state : null;
-    }
-
-    @Unique
-    private boolean aquaAcrobatics$isWaterAtCamera(World world, BlockPos blockPos, IBlockState state, Vec3d cameraPos) {
-        if (state.getMaterial() != Material.WATER) {
-            return false;
-        }
-
-        return cameraPos.y < (double) blockPos.getY() + this.aquaAcrobatics$getWaterHeight(world, blockPos, state);
-    }
-
-    @Unique
-    private Vec3d aquaAcrobatics$getCameraPosition(Entity entity, float partialTicks) {
-        double x = entity.prevPosX + (entity.posX - entity.prevPosX) * (double) partialTicks;
-        double y = entity.prevPosY + (entity.posY - entity.prevPosY) * (double) partialTicks;
-        double z = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * (double) partialTicks;
-        Vec3d eyePos = new Vec3d(x, y + (double) this.aquaAcrobatics$getCameraEyeHeight(entity, partialTicks), z);
-        if (this.mc.gameSettings.thirdPersonView <= 0 || this.mc.gameSettings.debugCamEnable) {
-            return eyePos;
-        }
-
-        return this.aquaAcrobatics$getThirdPersonCameraPosition(entity, partialTicks, eyePos);
-    }
-
-    @Unique
-    private Vec3d aquaAcrobatics$getThirdPersonCameraPosition(Entity entity, float partialTicks, Vec3d eyePos) {
-        double cameraDistance = this.thirdPersonDistancePrev + (4.0F - this.thirdPersonDistancePrev) * partialTicks;
-        float yaw = entity.rotationYaw;
-        float pitch = entity.rotationPitch;
-        if (this.mc.gameSettings.thirdPersonView == 2) {
-            pitch += 180.0F;
-        }
-
-        double xOffset = (double) (-MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F)) * cameraDistance;
-        double zOffset = (double) (MathHelper.cos(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F)) * cameraDistance;
-        double yOffset = (double) (-MathHelper.sin(pitch * 0.017453292F)) * cameraDistance;
-
-        for (int i = 0; i < 8; ++i) {
-            float xJitter = (float) ((i & 1) * 2 - 1) * 0.1F;
-            float yJitter = (float) ((i >> 1 & 1) * 2 - 1) * 0.1F;
-            float zJitter = (float) ((i >> 2 & 1) * 2 - 1) * 0.1F;
-            Vec3d from = eyePos.add(xJitter, yJitter, zJitter);
-            Vec3d to = new Vec3d(eyePos.x - xOffset + (double) xJitter + (double) zJitter, eyePos.y - yOffset + (double) yJitter, eyePos.z - zOffset + (double) zJitter);
-            RayTraceResult result = this.mc.world.rayTraceBlocks(from, to);
-            if (result != null) {
-                double hitDistance = result.hitVec.distanceTo(eyePos);
-                if (hitDistance < cameraDistance) {
-                    cameraDistance = hitDistance;
-                }
-            }
-        }
-
-        xOffset = (double) (-MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F)) * cameraDistance;
-        zOffset = (double) (MathHelper.cos(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F)) * cameraDistance;
-        yOffset = (double) (-MathHelper.sin(pitch * 0.017453292F)) * cameraDistance;
-        return new Vec3d(eyePos.x - xOffset, eyePos.y - yOffset, eyePos.z - zOffset);
-    }
-
-    @Unique
-    private float aquaAcrobatics$getCameraEyeHeight(Entity entity, float partialTicks) {
-        if (entity instanceof EntityPlayer && !IntegrationManager.isRandomPatchesEnabled()) {
-            return MathHelperNew.lerp(partialTicks, this.previousEyeHeight, this.eyeHeight);
-        }
-        return entity.getEyeHeight();
-    }
-
-    @Unique
-    private float aquaAcrobatics$getWaterHeight(World world, BlockPos pos, IBlockState state) {
-        Block block = state.getBlock();
-        if (block instanceof IFluidBlock) {
-            float filled = ((IFluidBlock) block).getFilledPercentage(world, pos);
-            return filled < 0.0F ? filled + 1.0F : filled;
-        }
-        if (block instanceof BlockLiquid) {
-            return BlockLiquid.getBlockLiquidHeight(state, world, pos);
-        }
-        float height = block.getBlockLiquidHeight(world, pos, state, Material.WATER);
-        return height > 0.0F ? height : 1.0F;
-    }
+    // Backport start - Camera logic from modern versions //TODO compatibility check
+//    @Redirect(
+//            method = {"updateFogColor", "setupFog", "getFOVModifier"},
+//            at = @At(
+//                    value = "INVOKE",
+//                    target = "Lnet/minecraft/client/renderer/ActiveRenderInfo;getBlockStateAtEntityViewpoint(Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;F)Lnet/minecraft/block/state/IBlockState;"
+//            )
+//    )
+//    private IBlockState getBlockStateAtCameraForFog(World world, Entity entity, float partialTicks) {
+//        IBlockState cameraWaterState = this.aquaAcrobatics$getCameraWaterState(world, entity, partialTicks);
+//        if (cameraWaterState != null) {
+//            return cameraWaterState;
+//        }
+//
+//        IBlockState state = ActiveRenderInfo.getBlockStateAtEntityViewpoint(world, entity, partialTicks);
+//        if (state.getMaterial() == Material.WATER) {
+//            return Blocks.AIR.getDefaultState();
+//        }
+//        return state;
+//    }
+//
+//    @Redirect(
+//            method = "updateFogColor",
+//            at = @At(
+//                    value = "INVOKE",
+//                    target = "Lnet/minecraft/block/Block;getFogColor(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/Vec3d;F)Lnet/minecraft/util/math/Vec3d;"
+//            )
+//    )
+//    private Vec3d getFogColor(Block block, World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks) {
+//        Vec3d cameraPos = this.aquaAcrobatics$getCameraPosition(entity, partialTicks);
+//        BlockPos cameraBlockPos = new BlockPos(cameraPos);
+//        IBlockState cameraState = world.getBlockState(cameraBlockPos);
+//        if (this.aquaAcrobatics$isWaterAtCamera(world, cameraBlockPos, cameraState, cameraPos)) {
+//            return cameraState.getBlock().getFogColor(world, cameraBlockPos, cameraState, entity, originalColor, partialTicks);
+//        }
+//        if (state.getMaterial() == Material.WATER) {
+//            return originalColor;
+//        }
+//        return block.getFogColor(world, pos, state, entity, originalColor, partialTicks);
+//    }
+//
+//    @Unique
+//    private IBlockState aquaAcrobatics$getCameraWaterState(World world, Entity entity, float partialTicks) {
+//        Vec3d cameraPos = this.aquaAcrobatics$getCameraPosition(entity, partialTicks);
+//        BlockPos blockPos = new BlockPos(cameraPos);
+//        IBlockState state = world.getBlockState(blockPos);
+//        return this.aquaAcrobatics$isWaterAtCamera(world, blockPos, state, cameraPos) ? state : null;
+//    }
+//
+//    @Unique
+//    private boolean aquaAcrobatics$isWaterAtCamera(World world, BlockPos blockPos, IBlockState state, Vec3d cameraPos) {
+//        if (state.getMaterial() != Material.WATER) {
+//            return false;
+//        }
+//
+//        return cameraPos.y < (double) blockPos.getY() + this.aquaAcrobatics$getWaterHeight(world, blockPos, state);
+//    }
+//
+//    @Unique
+//    private Vec3d aquaAcrobatics$getCameraPosition(Entity entity, float partialTicks) {
+//        double x = entity.prevPosX + (entity.posX - entity.prevPosX) * (double) partialTicks;
+//        double y = entity.prevPosY + (entity.posY - entity.prevPosY) * (double) partialTicks;
+//        double z = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * (double) partialTicks;
+//        Vec3d eyePos = new Vec3d(x, y + (double) this.aquaAcrobatics$getCameraEyeHeight(entity, partialTicks), z);
+//        if (this.mc.gameSettings.thirdPersonView <= 0 || this.mc.gameSettings.debugCamEnable) {
+//            return eyePos;
+//        }
+//
+//        return this.aquaAcrobatics$getThirdPersonCameraPosition(entity, partialTicks, eyePos);
+//    }
+//
+//    @Unique
+//    private Vec3d aquaAcrobatics$getThirdPersonCameraPosition(Entity entity, float partialTicks, Vec3d eyePos) {
+//        double cameraDistance = this.thirdPersonDistancePrev + (4.0F - this.thirdPersonDistancePrev) * partialTicks;
+//        float yaw = entity.rotationYaw;
+//        float pitch = entity.rotationPitch;
+//        if (this.mc.gameSettings.thirdPersonView == 2) {
+//            pitch += 180.0F;
+//        }
+//
+//        double xOffset = (double) (-MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F)) * cameraDistance;
+//        double zOffset = (double) (MathHelper.cos(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F)) * cameraDistance;
+//        double yOffset = (double) (-MathHelper.sin(pitch * 0.017453292F)) * cameraDistance;
+//
+//        for (int i = 0; i < 8; ++i) {
+//            float xJitter = (float) ((i & 1) * 2 - 1) * 0.1F;
+//            float yJitter = (float) ((i >> 1 & 1) * 2 - 1) * 0.1F;
+//            float zJitter = (float) ((i >> 2 & 1) * 2 - 1) * 0.1F;
+//            Vec3d from = eyePos.add(xJitter, yJitter, zJitter);
+//            Vec3d to = new Vec3d(eyePos.x - xOffset + (double) xJitter + (double) zJitter, eyePos.y - yOffset + (double) yJitter, eyePos.z - zOffset + (double) zJitter);
+//            RayTraceResult result = this.mc.world.rayTraceBlocks(from, to);
+//            if (result != null) {
+//                double hitDistance = result.hitVec.distanceTo(eyePos);
+//                if (hitDistance < cameraDistance) {
+//                    cameraDistance = hitDistance;
+//                }
+//            }
+//        }
+//
+//        xOffset = (double) (-MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F)) * cameraDistance;
+//        zOffset = (double) (MathHelper.cos(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F)) * cameraDistance;
+//        yOffset = (double) (-MathHelper.sin(pitch * 0.017453292F)) * cameraDistance;
+//        return new Vec3d(eyePos.x - xOffset, eyePos.y - yOffset, eyePos.z - zOffset);
+//    }
+//
+//    @Unique
+//    private float aquaAcrobatics$getCameraEyeHeight(Entity entity, float partialTicks) {
+//        if (entity instanceof EntityPlayer && !IntegrationManager.isRandomPatchesEnabled()) {
+//            return MathHelperNew.lerp(partialTicks, this.previousEyeHeight, this.eyeHeight);
+//        }
+//        return entity.getEyeHeight();
+//    }
+//
+//    @Unique
+//    private float aquaAcrobatics$getWaterHeight(World world, BlockPos pos, IBlockState state) {
+//        Block block = state.getBlock();
+//        if (block instanceof IFluidBlock) {
+//            float filled = ((IFluidBlock) block).getFilledPercentage(world, pos);
+//            return filled < 0.0F ? filled + 1.0F : filled;
+//        }
+//        if (block instanceof BlockLiquid) {
+//            return BlockLiquid.getBlockLiquidHeight(state, world, pos);
+//        }
+//        float height = block.getBlockLiquidHeight(world, pos, state, Material.WATER);
+//        return height > 0.0F ? height : 1.0F;
+//    }
     // Backport end - Camera logic from modern versions
 
     /**
